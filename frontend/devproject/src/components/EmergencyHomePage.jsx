@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
-import { 
-  Phone, 
-  History, 
-  Settings, 
-  AlertTriangle, 
-  Ambulance, 
-  FireExtinguisher, 
-  Shield, 
-  MapPin, 
+import {
+  Phone,
+  History,
+  Settings,
+  AlertTriangle,
+  Ambulance,
+  FireExtinguisher,
+  Shield,
+  MapPin,
   Timer,
-  Bell
+  Bell,
 } from 'lucide-react';
 
 // Helper components
 const Card = ({ children, onClick, className }) => (
-  <div 
+  <div
     className={`bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 ${className || ''}`}
     onClick={onClick}
   >
@@ -23,11 +23,13 @@ const Card = ({ children, onClick, className }) => (
 );
 
 const EmergencyTypeButton = ({ icon: Icon, label, color, onClick, selected }) => (
-  <button 
+  <button
     className={`flex flex-col items-center justify-center p-4 rounded-lg transition-all duration-200 w-full
       ${selected ? 'bg-opacity-20 ring-2 scale-105' : 'bg-opacity-10 hover:bg-opacity-15'}`}
-    style={{ backgroundColor: selected ? color : undefined, ringColor: color }}
+    style={{ backgroundColor: selected ? color : undefined, boxShadow: selected ? `0 0 0 2px ${color}` : 'none' }}
     onClick={onClick}
+    aria-label={`Request ${label} emergency service`}
+    role="button"
   >
     <Icon size={32} color={color} strokeWidth={2} />
     <span className="mt-2 font-medium text-gray-800">{label}</span>
@@ -36,16 +38,16 @@ const EmergencyTypeButton = ({ icon: Icon, label, color, onClick, selected }) =>
 
 const RecentRequestCard = ({ request }) => {
   const statusColors = {
-    'Waiting': 'bg-yellow-100 text-yellow-800',
-    'Assigned': 'bg-blue-100 text-blue-800',
+    Waiting: 'bg-yellow-100 text-yellow-800',
+    Assigned: 'bg-blue-100 text-blue-800',
     'En Route': 'bg-purple-100 text-purple-800',
-    'Resolved': 'bg-green-100 text-green-800'
+    Resolved: 'bg-green-100 text-green-800',
   };
 
   const typeIcons = {
-    'Ambulance': <Ambulance size={16} className="mr-1" />,
-    'Fire': <FireExtinguisher size={16} className="mr-1" />,
-    'Police': <Shield size={16} className="mr-1" />
+    Ambulance: <Ambulance size={16} className="mr-1" />,
+    Fire: <FireExtinguisher size={16} className="mr-1" />,
+    Police: <Shield size={16} className="mr-1" />,
   };
 
   return (
@@ -66,11 +68,17 @@ const RecentRequestCard = ({ request }) => {
         <MapPin size={14} className="mr-1" /> {request.location}
       </div>
       <div className="mt-3 flex justify-between">
-        <button className="text-blue-600 text-sm font-medium flex items-center">
+        <button
+          className="text-blue-600 text-sm font-medium flex items-center"
+          onClick={() => console.log(`View details for request ${request.id}`)}
+        >
           View Details
         </button>
         {request.status !== 'Resolved' && (
-          <button className="text-blue-600 text-sm font-medium flex items-center">
+          <button
+            className="text-blue-600 text-sm font-medium flex items-center"
+            onClick={() => console.log(`Track request ${request.id}`)}
+          >
             Track
           </button>
         )}
@@ -83,29 +91,26 @@ const RecentRequestCard = ({ request }) => {
 export default function EmergencyHomePage() {
   const [selectedType, setSelectedType] = useState(null);
   const [userName, setUserName] = useState('Alex');
-  const [recentRequests, setRecentRequests] = useState([
-    {
-      id: '1012',
-      type: 'Ambulance',
-      time: '12:40 PM Today',
-      location: '123 Main St',
-      status: 'En Route'
-    },
-    {
-      id: '1011',
-      type: 'Fire',
-      time: '01:20 PM Yesterday',
-      location: '456 Oak Ave',
-      status: 'Resolved'
-    },
-    {
-      id: '1010',
-      type: 'Police',
-      time: '09:15 AM May 16',
-      location: '789 Pine Blvd',
-      status: 'Assigned'
-    }
-  ]);
+  const [recentRequests, setRecentRequests] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Replace with actual API calls
+        const userResponse = { name: 'Alex' };
+        const requestsResponse = [
+          { id: '1012', type: 'Ambulance', time: '12:40 PM Today', location: '123 Main St', status: 'En Route' },
+          { id: '1011', type: 'Fire', time: '01:20 PM Yesterday', location: '456 Oak Ave', status: 'Resolved' },
+          { id: '1010', type: 'Police', time: '09:15 AM May 16', location: '789 Pine Blvd', status: 'Assigned' },
+        ];
+        setUserName(userResponse.name);
+        setRecentRequests(requestsResponse);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -137,32 +142,32 @@ export default function EmergencyHomePage() {
               <AlertTriangle size={20} className="mr-2 text-red-500" />
               Request Emergency Services
             </h3>
-            
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <EmergencyTypeButton 
-                icon={Ambulance} 
-                label="Ambulance" 
-                color="#dc2626" 
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+              <EmergencyTypeButton
+                icon={Ambulance}
+                label="Ambulance"
+                color="#dc2626"
                 selected={selectedType === 'Ambulance'}
                 onClick={() => setSelectedType('Ambulance')}
               />
-              <EmergencyTypeButton 
-                icon={FireExtinguisher} 
-                label="Fire" 
+              <EmergencyTypeButton
+                icon={FireExtinguisher}
+                label="Fire"
                 color="#ea580c"
                 selected={selectedType === 'Fire'}
                 onClick={() => setSelectedType('Fire')}
               />
-              <EmergencyTypeButton 
-                icon={Shield} 
-                label="Police" 
+              <EmergencyTypeButton
+                icon={Shield}
+                label="Police"
                 color="#2563eb"
                 selected={selectedType === 'Police'}
                 onClick={() => setSelectedType('Police')}
               />
             </div>
 
-            <button 
+            <button
               className={`w-full py-3 rounded-lg text-white font-medium flex items-center justify-center
                 ${selectedType ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-400 cursor-not-allowed'}`}
               disabled={!selectedType}
@@ -174,7 +179,7 @@ export default function EmergencyHomePage() {
         </section>
 
         {/* Quick Access Section */}
-        <section className="mb-8 grid grid-cols-2 gap-4">
+        <section className="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Card className="flex items-center">
             <History size={24} className="mr-3 text-blue-500" />
             <div>
@@ -199,7 +204,10 @@ export default function EmergencyHomePage() {
               <RecentRequestCard key={request.id} request={request} />
             ))}
           </div>
-          <button className="text-blue-600 font-medium flex items-center mt-2">
+          <button
+            className="text-blue-600 font-medium flex items-center mt-2"
+            onClick={() => console.log('View all history')}
+          >
             View all history
           </button>
         </section>
@@ -208,19 +216,19 @@ export default function EmergencyHomePage() {
       {/* Navigation Footer */}
       <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-2">
         <div className="flex justify-around">
-          <button className="flex flex-col items-center p-2 text-blue-600">
+          <button className="flex flex-col items-center p-2 text-blue-600" aria-label="Emergency Services">
             <AlertTriangle size={20} />
             <span className="text-xs mt-1">Emergency</span>
           </button>
-          <button className="flex flex-col items-center p-2 text-gray-600">
+          <button className="flex flex-col items-center p-2 text-gray-600" aria-label="Request History">
             <History size={20} />
             <span className="text-xs mt-1">History</span>
           </button>
-          <button className="flex flex-col items-center p-2 text-gray-600">
+          <button className="flex flex-col items-center p-2 text-gray-600" aria-label="Track Requests">
             <MapPin size={20} />
             <span className="text-xs mt-1">Track</span>
           </button>
-          <button className="flex flex-col items-center p-2 text-gray-600">
+          <button className="flex flex-col items-center p-2 text-gray-600" aria-label="Settings">
             <Settings size={20} />
             <span className="text-xs mt-1">Settings</span>
           </button>
