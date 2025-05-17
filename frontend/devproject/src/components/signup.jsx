@@ -2,23 +2,60 @@ import React, { useState } from 'react';
 import './Auth.css';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import api from '../api';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', password: '', confirmPassword: ''
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
   });
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Sign up form submitted:', formData);
-    // Navigate to Emergency Homepage on successful signup
-    navigate('/user');
+    setError('');
+
+    // Client-side validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Invalid email format');
+      return;
+    }
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    if (!/^\d{10}$/.test(formData.phone)) {
+      setError('Phone number must be 10 digits');
+      return;
+    }
+
+    try {
+      const res = await api.post('/api/users/signup', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+      });
+      console.log('User signed up:', res.data.user);
+      navigate('/signin');
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'Signup failed. Please try again.';
+      setError(errorMsg);
+      console.error('Signup error:', err.response?.data, err.response?.status, err.message);
+    }
   };
 
   return (
@@ -36,7 +73,7 @@ const SignUp = () => {
       <div className="auth-form-container">
         <h2>Create Account</h2>
         <p>Join MUrgency's emergency response network</p>
-
+        {error && <p className="error-message">{error}</p>}
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Full Name</label>

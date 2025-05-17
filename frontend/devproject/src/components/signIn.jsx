@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Auth.css';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import api from '../api'; 
 
 const SignIn = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -12,11 +13,22 @@ const SignIn = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Sign in form submitted:', formData);
-    // Navigate to Emergency Homepage on successful login
-    navigate('/user');
+
+    try {
+      const res = await api.post('/signin', {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      localStorage.setItem("token", res.data.token);
+      console.log("User signed in:", res.data.user);
+      navigate('/user');
+    } catch (err) {
+      console.error("Sign in error:", err.response?.data?.error || err.message);
+      alert(err.response?.data?.error || "Sign in failed");
+    }
   };
 
   return (
