@@ -9,6 +9,7 @@
   // ],
   "vars": {
     "DATABASE_URL": "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiODc1NjViZjgtNDViMi00MjE2LWJmYTctOWExNzQ1YmU3ZjhjIiwidGVuYW50X2lkIjoiYmFkM2YzNDM5YTFiNjVjOWEwNTg0NmNjMTFkY2M1YzYzYWQyNjYzMTFhZmE0ZmJlZjBhN2FjYTlkOTljYjUxOSIsImludGVybmFsX3NlY3JldCI6IjVlNDAyZmE5LWRmOGItNGYyZi04ZjZjLTE4ODVkNDg4YTAwYSJ9.awc-t33IruEZcknW_0Bmxan2IadHXD38mK54pmLdAKc",
+    "DIRECT_URL": "postgresql://neondb_owner:npg_1McZGHspTwm3@ep-aged-lab-a49m0e2t-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require",
     "JWT_SECRET": "your-secure-jwt-secret"
   }
   // "kv_namespaces": [
