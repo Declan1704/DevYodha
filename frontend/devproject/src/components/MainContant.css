@@ -1,0 +1,137 @@
+.main-content {
+  width: 100%;
+  background-color: #f9f9f9;
+  overflow: hidden;
+  padding: 3rem 1rem;
+}
+
+/* FEATURES SECTION */
+.features-section {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto 4rem auto;
+  gap: 2rem;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s ease;
+}
+
+.features-section.animate-section {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feature {
+  flex: 1 1 300px;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  margin: 0 auto 1rem;
+  transition: background-color 0.3s;
+}
+
+/* Color Accents */
+.feature.red .feature-icon {
+  background-color: rgba(230, 57, 70, 0.1);
+  color: #e63946;
+}
+.feature.orange .feature-icon {
+  background-color: rgba(255, 165, 0, 0.1);
+  color: #ff8c00;
+}
+.feature.blue .feature-icon {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+}
+
+/* CTA SECTION */
+.cta-section {
+  text-align: center;
+  padding: 3rem 1rem;
+  background-color: #111;
+  color: white;
+  border-radius: 16px;
+  margin: 0 auto;
+  max-width: 900px;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s ease;
+}
+
+.cta-section.fade-in-up {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cta-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.cta-section p {
+  color: #ddd;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cta-primary,
+.cta-secondary {
+  padding: 0.8rem 2rem;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cta-primary {
+  background-color: #e63946;
+  color: white;
+  border: none;
+}
+
+.cta-primary:hover {
+  background-color: #c62836;
+  transform: translateY(-2px);
+}
+
+.cta-secondary {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+}
+
+.cta-secondary:hover {
+  background-color: white;
+  color: black;
+  transform: translateY(-2px);
+}

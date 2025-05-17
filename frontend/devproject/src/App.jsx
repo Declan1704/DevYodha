@@ -3,12 +3,19 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import SignIn from './components/signIn';
 import SignUp from './components/signup';
 import EmergencyHomePage from './components/EmergencyHomePage';
+import LandingPage from './components/landingpage'; // Make sure this path and file exists
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/signIn" />} />
+        {/* Redirect root "/" to "/landingpage" */}
+        <Route path="/" element={<Navigate to="/landingpage" replace />} />
+
+        {/* Landing page route */}
+        <Route path="/landingpage" element={<LandingPageage />} />
+
+        {/* Other routes */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/user" element={<EmergencyHomePage />} />
