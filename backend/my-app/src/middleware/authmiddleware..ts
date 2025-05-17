@@ -1,8 +1,7 @@
 import { Hono } from "hono";
-import { Context } from "hono";
-import jwt from "jsonwebtoken";
+import { jwt, verify } from "hono/jwt";
 
-export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
+export const authMiddleware = async (c: any, next: () => Promise<void>) => {
   const authHeader = c.req.header("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return c.json({ error: "Unauthorized" }, 401);
@@ -10,13 +9,13 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
 
   const token = authHeader.replace("Bearer ", "");
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      userId: string;
-      name: string;
-    };
-    c.set("user", decoded);
+    const payload = await verify(token, c.env.JWT_SECRET);
+    c.set("user", {
+      userId: payload.userId as number,
+      name: payload.username as string,
+    });
     await next();
   } catch (error) {
-    return c.json({ error: "Invalid token" }, 401);
+    return c.json({ error: "Invalid or expired token" }, 401);
   }
 };

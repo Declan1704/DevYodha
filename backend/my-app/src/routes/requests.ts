@@ -51,13 +51,13 @@ requests.patch("/:id", authMiddleware, async (c) => {
   const prisma = getPrisma(c.env);
 
   const request = await prisma.request.update({
-    where: { id: Number(id) },
-    data: { status, ambulanceId },
+    where: { id: parseInt(id) },
+    data: { status, ambulanceId: ambulanceId ? parseInt(ambulanceId) : null },
     include: { user: true },
   });
 
   c.get("wsServer")?.broadcast(
-    JSON.stringify({ event: "requestStatus", data: { id, status } })
+    JSON.stringify({ event: "requestStatus", data: { id: request.id, status } })
   );
   return c.json(request);
 });
@@ -69,21 +69,21 @@ requests.post("/simulate-ambulance/:id", authMiddleware, async (c) => {
 
   // Check if ambulance exists
   const ambulanceExists = await prisma.ambulance.findUnique({
-    where: { id },
+    where: { id: parseInt(id) },
   });
   if (!ambulanceExists) {
     return c.json({ error: "Ambulance not found" }, 404);
   }
 
   const ambulance = await prisma.ambulance.update({
-    where: { id },
+    where: { id: parseInt(id) },
     data: { latitude, longitude },
   });
 
   c.get("wsServer")?.broadcast(
     JSON.stringify({
       event: "ambulanceLocation",
-      data: { id, latitude, longitude },
+      data: { id: ambulance.id, latitude, longitude },
     })
   );
   return c.json(ambulance);
@@ -94,7 +94,7 @@ requests.post("/start-simulation/:requestId", authMiddleware, async (c) => {
   const prisma = getPrisma(c.env);
 
   const request = await prisma.request.findUnique({
-    where: { id: Number(requestId) },
+    where: { id: parseInt(requestId) },
   });
   if (!request) return c.json({ error: "Request not found" }, 404);
 
@@ -104,7 +104,7 @@ requests.post("/start-simulation/:requestId", authMiddleware, async (c) => {
   if (!ambulance) return c.json({ error: "No available ambulance" }, 404);
 
   await prisma.request.update({
-    where: { id: Number(requestId) },
+    where: { id: parseInt(requestId) },
     data: { ambulanceId: ambulance.id, status: "Dispatched" },
   });
 
@@ -127,7 +127,7 @@ requests.post("/start-simulation/:requestId", authMiddleware, async (c) => {
   c.get("wsServer")?.broadcast(
     JSON.stringify({
       event: "requestStatus",
-      data: { id: requestId, status: "Dispatched" },
+      data: { id: parseInt(requestId), status: "Dispatched" },
     })
   );
   return c.json(updatedAmbulance);

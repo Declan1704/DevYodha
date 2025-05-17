@@ -14,35 +14,37 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model User{
-  id Int @id @default(autoincrement())
-  name String
-  email String @unique
-  password String
-  phone String
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String
+  requests  Request[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  requests Request[]
 }
 
 model Request {
-  id            Int   @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   userId        Int
-  user          User     @relation(fields: [userId], references: [id])
   emergencyType String
   latitude      Float
   longitude     Float
   status        String   @default("Pending")
-  ambulanceId   String?
+  ambulanceId   Int?
+  user          User     @relation(fields: [userId], references: [id])
+  ambulance     Ambulance? @relation(fields: [ambulanceId], references: [id])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
 
 model Ambulance {
-  id         String   @id @default(uuid())
-  latitude   Float
-  longitude  Float
-  available  Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  latitude  Float
+  longitude Float
+  available Boolean  @default(true)
+  requests  Request[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -10,7 +10,7 @@ const users = new Hono<{
     JWT_SECRET: string;
   };
   Variables: {
-    user: { userId: string; name: string };
+    user: { userId: number; name: string };
   };
 }>();
 
@@ -19,16 +19,13 @@ users.post("/signup", async (c) => {
   const { name, email, password, phone } = await c.req.json();
 
   try {
-    // Check if user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return c.json({ message: "User already exists" }, 409);
     }
 
-    // Hash password
     const hashedPassword = await hash(password, 10);
 
-    // Create user
     const user = await prisma.user.create({
       data: {
         name,
@@ -38,7 +35,6 @@ users.post("/signup", async (c) => {
       },
     });
 
-    // Generate JWT
     const token = sign(
       { userId: user.id, username: user.name },
       c.env.JWT_SECRET,
@@ -65,13 +61,11 @@ users.post("/signin", async (c) => {
       return c.json({ message: "Invalid credentials" }, 401);
     }
 
-    // Verify password
     const isValid = await compare(password, user.password);
     if (!isValid) {
       return c.json({ message: "Invalid credentials" }, 401);
     }
 
-    // Generate JWT
     const token = sign(
       { userId: user.id, username: user.name },
       c.env.JWT_SECRET,
