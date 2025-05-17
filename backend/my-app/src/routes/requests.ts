@@ -67,6 +67,14 @@ requests.post("/simulate-ambulance/:id", authMiddleware, async (c) => {
   const { latitude, longitude } = await c.req.json();
   const prisma = getPrisma(c.env);
 
+  // Check if ambulance exists
+  const ambulanceExists = await prisma.ambulance.findUnique({
+    where: { id },
+  });
+  if (!ambulanceExists) {
+    return c.json({ error: "Ambulance not found" }, 404);
+  }
+
   const ambulance = await prisma.ambulance.update({
     where: { id },
     data: { latitude, longitude },
