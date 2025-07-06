@@ -17,7 +17,7 @@ const SignIn = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:8787/api/users/signin", {
+      const res = await axios.post("http://localhost:34869/api/users/signin", {
         email: formData.email,
         password: formData.password,
       });

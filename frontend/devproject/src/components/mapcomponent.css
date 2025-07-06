@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+img.pulse {
+  animation: pulse-opacity 2s infinite ease-in-out;
+}
+
+@keyframes pulse-opacity {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Pulse for assigned ambulance marker */
+img.assigned-ambulance-pulse {
+  animation: pulse-scale-opacity 1.5s infinite;
+}
+
+@keyframes pulse-scale-opacity {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  } /* Subtle scale */
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Pulse for user's own request marker */
+img.my-request-pulse {
+  animation: pulse-stronger-opacity 1.8s infinite;
+}
+
+@keyframes pulse-stronger-opacity {
+  0% {
+    opacity: 1;
+    filter: brightness(100%);
+  }
+  50% {
+    opacity: 0.7;
+    filter: brightness(120%);
+  } /* Brighter pulse */
+  100% {
+    opacity: 1;
+    filter: brightness(100%);
+  }
+}
+
+/* You might want a specific class for user location if you add complex animation */
+.user-location-marker {
+  /* Example: simple border pulse - this usually works better with SVG or div icons */
+  /* For image icons, the image itself needs to be designed for this or use filter effects */
+}
+
+/* Style for Leaflet popups to match theme better (optional) */
+.leaflet-popup-content-wrapper {
+  background: #2d3748; /* Tailwind gray-800 */
+  color: #e2e8f0; /* Tailwind gray-300 */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.leaflet-popup-content {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.leaflet-popup-content p {
+  margin: 8px 0;
+}
+.leaflet-popup-content strong {
+  color: #ffffff; /* White for strong text */
+}
+.leaflet-popup-tip {
+  background: #2d3748;
+}
+.leaflet-popup-close-button {
+  color: #cbd5e0 !important; /* Tailwind gray-400 */
+}
+.leaflet-popup-close-button:hover {
+  color: #ffffff !important;
+}
+
+/* Ensure Leaflet controls don't get obscured by other elements if you have a complex layout */
+.leaflet-control-container {
+  z-index: 1000; /* Default is often fine, adjust if needed */
+}
