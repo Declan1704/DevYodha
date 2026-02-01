@@ -124,7 +124,7 @@ const MapComponent = () => {
         watchIdRef.current = navigator.geolocation.watchPosition(
           onSuccess,
           onError,
-          options
+          options,
         );
       }
     };
@@ -172,7 +172,7 @@ const MapComponent = () => {
         req.status !== "Completed" &&
         req.status !== "Cancelled" &&
         Math.abs(req.latitude - userLocation[0]) < threshold &&
-        Math.abs(req.longitude - userLocation[1]) < threshold
+        Math.abs(req.longitude - userLocation[1]) < threshold,
     );
     // if(activeReq) console.log("myActiveRequest updated:", activeReq);
     return activeReq;
@@ -240,7 +240,7 @@ const MapComponent = () => {
         setEta(null);
       });
     },
-    [myActiveRequest] // myActiveRequest is the key dependency
+    [myActiveRequest], // myActiveRequest is the key dependency
   );
 
   useEffect(() => {
@@ -255,7 +255,8 @@ const MapComponent = () => {
     const fetchAllData = async () => {
       setInitialDataLoaded(false); // Reset for re-fetches if userLocation changes significantly
       try {
-        let hospitalApiUrl = "http://localhost:34869/api/hospitals";
+        let hospitalApiUrl =
+          "https://my-app.dev-yodha.workers.dev/api/hospitals";
         // Only add lat/lon if userLocation is truly available and not the fallback initially,
         // or if the fallback is considered a valid "current" view.
         if (
@@ -269,8 +270,13 @@ const MapComponent = () => {
         }
 
         const [ambulanceRes, requestRes, hospitalRes] = await Promise.all([
-          fetch("http://localhost:34869/api/requests/ambulances", { headers }),
-          fetch("http://localhost:34869/api/requests", { headers }),
+          fetch(
+            "https://my-app.dev-yodha.workers.dev/api/requests/ambulances",
+            { headers },
+          ),
+          fetch("https://my-app.dev-yodha.workers.dev/api/requests", {
+            headers,
+          }),
           fetch(hospitalApiUrl, { headers }),
         ]);
         const ambulanceData = ambulanceRes.ok ? await ambulanceRes.json() : [];
@@ -323,8 +329,8 @@ const MapComponent = () => {
             if (update.event === "ambulanceLocation") {
               setAmbulances((prevAmbs) =>
                 prevAmbs.map((amb) =>
-                  amb.id === update.data.id ? { ...amb, ...update.data } : amb
-                )
+                  amb.id === update.data.id ? { ...amb, ...update.data } : amb,
+                ),
               );
               // Use the `myActiveRequest` from the component's current state (closure)
               // The WebSocket effect's dependencies will ensure this closure is updated when `myActiveRequest` changes.
@@ -336,14 +342,14 @@ const MapComponent = () => {
                 updateRoute(
                   update.data.id,
                   update.data.latitude,
-                  update.data.longitude
+                  update.data.longitude,
                 );
               }
             } else if (update.event === "requestStatus") {
               setRequests((prevReqs) =>
                 prevReqs.map((req) =>
-                  req.id === update.data.id ? { ...req, ...update.data } : req
-                )
+                  req.id === update.data.id ? { ...req, ...update.data } : req,
+                ),
               );
             } else if (update.event === "newRequest") {
               setRequests((prevReqs) => {
@@ -358,7 +364,7 @@ const MapComponent = () => {
             "WS message parse error:",
             error.message,
             "Data:",
-            event.data
+            event.data,
           );
         }
       };
@@ -368,7 +374,7 @@ const MapComponent = () => {
           reconnectAttempts++;
           setTimeout(
             connectWebSocket,
-            reconnectDelay * Math.min(reconnectAttempts, 5)
+            reconnectDelay * Math.min(reconnectAttempts, 5),
           );
         }
       };
@@ -392,13 +398,13 @@ const MapComponent = () => {
       myActiveRequest.ambulanceId
     ) {
       const assignedAmbulance = ambulances.find(
-        (amb) => amb.id === myActiveRequest.ambulanceId
+        (amb) => amb.id === myActiveRequest.ambulanceId,
       );
       if (assignedAmbulance) {
         updateRoute(
           assignedAmbulance.id,
           assignedAmbulance.latitude,
-          assignedAmbulance.longitude
+          assignedAmbulance.longitude,
         );
       }
     } else {
@@ -430,17 +436,20 @@ const MapComponent = () => {
       return;
     }
     try {
-      const res = await fetch("http://localhost:34869/api/requests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        "https://my-app.dev-yodha.workers.dev/api/requests",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            emergencyType: "Medical Emergency",
+            location: { latitude: userLocation[0], longitude: userLocation[1] },
+          }),
         },
-        body: JSON.stringify({
-          emergencyType: "Medical Emergency",
-          location: { latitude: userLocation[0], longitude: userLocation[1] },
-        }),
-      });
+      );
       if (!res.ok) {
         const errData = await res
           .json()
@@ -485,37 +494,37 @@ const MapComponent = () => {
             userLocation[0],
             userLocation[1],
             obj.latitude,
-            obj.longitude
+            obj.longitude,
           ),
         }))
         .filter((obj) => obj.distance <= radiusKm && obj.distance !== Infinity)
         .sort((a, b) => a.distance - b.distance);
     },
-    [userLocation, calculateDistanceHaversine]
+    [userLocation, calculateDistanceHaversine],
   );
 
   const nearestAmbulancesForSidebar = useMemo(
     () => getNearbyObjects(ambulances, 10).slice(0, 5),
-    [ambulances, getNearbyObjects]
+    [ambulances, getNearbyObjects],
   );
   const allNearbyAmbulancesForMap = useMemo(
     () => getNearbyObjects(ambulances, 15),
-    [ambulances, getNearbyObjects]
+    [ambulances, getNearbyObjects],
   );
   const hospitalsWithDistance = useMemo(
     () => getNearbyObjects(hospitals, 10),
-    [hospitals, getNearbyObjects]
+    [hospitals, getNearbyObjects],
   );
   const availableAmbulancesCount = useMemo(
     () => ambulances.filter((amb) => amb.available).length,
-    [ambulances]
+    [ambulances],
   );
   const activeRequestsCount = useMemo(
     () =>
       requests.filter(
-        (req) => req.status !== "Completed" && req.status !== "Cancelled"
+        (req) => req.status !== "Completed" && req.status !== "Cancelled",
       ).length,
-    [requests]
+    [requests],
   );
 
   const retryLocation = useCallback(() => {
@@ -530,7 +539,7 @@ const MapComponent = () => {
         if (mapRef.current)
           mapRef.current.setView(
             [position.coords.latitude, position.coords.longitude],
-            14
+            14,
           );
       },
       (error) => {
@@ -541,7 +550,7 @@ const MapComponent = () => {
         setUserLocation(defaultFallbackLocation);
         setLocationLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 },
     );
   }, [defaultFallbackLocation]);
 
@@ -584,8 +593,8 @@ const MapComponent = () => {
                   {locationError
                     ? "Loc Issue"
                     : userLocation
-                    ? "Loc Active"
-                    : "Loc Pending"}
+                      ? "Loc Active"
+                      : "Loc Pending"}
                 </span>
                 {locationError && (
                   <button
@@ -602,8 +611,8 @@ const MapComponent = () => {
                     wsStatus === "connected"
                       ? "text-green-400"
                       : wsStatus === "connecting"
-                      ? "text-yellow-400"
-                      : "text-red-400"
+                        ? "text-yellow-400"
+                        : "text-red-400"
                   } text-lg leading-none`}
                 >
                   ●
@@ -622,10 +631,10 @@ const MapComponent = () => {
                   !token
                     ? "Login to request help"
                     : !userLocation || locationLoading
-                    ? "Location not ready"
-                    : myActiveRequest
-                    ? "Active request exists"
-                    : "Request Help"
+                      ? "Location not ready"
+                      : myActiveRequest
+                        ? "Active request exists"
+                        : "Request Help"
                 }
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-md disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm flex items-center space-x-2"
               >
@@ -794,8 +803,8 @@ const MapComponent = () => {
                           amb.id === myActiveRequest.ambulanceId
                             ? "bg-blue-700/50 border border-blue-500"
                             : amb.available
-                            ? "bg-green-700/30"
-                            : "bg-orange-700/30"
+                              ? "bg-green-700/30"
+                              : "bg-orange-700/30"
                         }`}
                       >
                         <p className="font-medium">
@@ -803,8 +812,8 @@ const MapComponent = () => {
                           {amb.id === myActiveRequest.ambulanceId
                             ? "(ASSIGNED)"
                             : amb.available
-                            ? "(Avail.)"
-                            : "(Busy)"}
+                              ? "(Avail.)"
+                              : "(Busy)"}
                         </p>
                         <p className="text-slate-400">
                           {amb.distance?.toFixed(1)} km
@@ -865,8 +874,8 @@ const MapComponent = () => {
                       amb.id === myActiveRequest?.ambulanceId
                         ? AssignedAmbulanceIcon
                         : amb.available
-                        ? AvailableAmbulanceIcon
-                        : UnavailableAmbulanceIcon
+                          ? AvailableAmbulanceIcon
+                          : UnavailableAmbulanceIcon
                     }
                   >
                     <Popup>
@@ -876,8 +885,8 @@ const MapComponent = () => {
                       {amb.id === myActiveRequest?.ambulanceId
                         ? "Assigned to You"
                         : amb.available
-                        ? "Available"
-                        : "Busy"}
+                          ? "Available"
+                          : "Busy"}
                       <br />
                       {amb.distance?.toFixed(1)} km away
                     </Popup>
@@ -886,7 +895,7 @@ const MapComponent = () => {
                 {requests
                   .filter(
                     (req) =>
-                      req.status !== "Completed" && req.status !== "Cancelled"
+                      req.status !== "Completed" && req.status !== "Cancelled",
                   )
                   .map((req) => {
                     const isMyReqMarker = myActiveRequest?.id === req.id;

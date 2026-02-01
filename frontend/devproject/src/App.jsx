@@ -145,11 +145,14 @@ function SignInPage() {
     e.preventDefault();
     setError("");
     try {
-      const response = await fetch("http://localhost:34869/api/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://my-app.dev-yodha.workers.dev/api/users/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        },
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || "Login failed");
@@ -258,12 +261,12 @@ function SignUpPage() {
     setError("");
     try {
       const response = await fetch(
-        "http://localhost:34869/api/users/register",
+        "https://my-app.dev-yodha.workers.dev/api/users/register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, email, password, phone }),
-        }
+        },
       );
       const data = await response.json();
       if (!response.ok) {

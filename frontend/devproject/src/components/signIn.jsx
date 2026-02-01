@@ -17,10 +17,13 @@ const SignIn = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:34869/api/users/signin", {
-        email: formData.email,
-        password: formData.password,
-      });
+      const res = await axios.post(
+        "https://my-app.dev-yodha.workers.dev/api/users/signin",
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+      );
 
       localStorage.setItem("token", res.data.token);
       console.log("User signed in:", res.data.user);

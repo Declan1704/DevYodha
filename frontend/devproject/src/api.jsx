@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:34869",
+  baseURL: "https://my-app.dev-yodha.workers.dev",
   headers: {
     "Content-Type": "application/json",
   },
